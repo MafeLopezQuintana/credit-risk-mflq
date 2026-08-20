@@ -11,6 +11,8 @@ import numpy as np
 CARPETA_ACTUAL = os.path.dirname(os.path.abspath(__file__))
 # Subimos dos niveles para llegar a la raíz del proyecto (src/ -> mlops_pipeline -> raíz)
 RUTA_DATASET = os.path.join(CARPETA_ACTUAL, '..', '..', 'Base_de_datos.xlsx')
+
+
 def cargar_datos(ruta):
     """Carga el dataset desde un archivo Excel."""
     df = pd.read_excel(ruta)
@@ -113,8 +115,8 @@ def pipeline_completo(ruta_datos):
 
 
 if __name__ == "__main__":
-    df_limpio = pipeline_completo(RUTA_DATASET)   # 👈 antes decía '../Base_de_datos.xlsx'
+    # Esto solo se ejecuta si corrés el script directamente (no si lo importás)
+    df_limpio = pipeline_completo(RUTA_DATASET)
     print("Shape final:", df_limpio.shape)
     print("Nulos restantes:\n", df_limpio.isnull().sum().sum())
     print(df_limpio.head())
-    
