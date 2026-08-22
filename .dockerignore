@@ -1,0 +1,5 @@
+creditrisk-venv/
+__pycache__/
+*.pyc
+.git/
+.ipynb_checkpoints/
