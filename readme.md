@@ -9,6 +9,31 @@ La empresa necesita anticipar qué clientes tienen mayor probabilidad de **no pa
 **Variable objetivo:** `Pago_atiempo` (1 = pagó a tiempo, 0 = no pagó a tiempo)
 
 ## 🗂️ Estructura del proyecto
+credit-risk-mflq/
+├── mlops_pipeline/
+│ ├── src/
+│ │ ├── Cargar_datos.ipynb # Carga inicial de datos
+│ │ ├── comprension_eda.ipynb # Análisis exploratorio de datos
+│ │ ├── ft_engineering.py # Pipeline de limpieza y feature engineering
+│ │ ├── model_training_evaluation.py # Entrenamiento y evaluación de modelos
+│ │ ├── model_monitoring.py # Detección de drift (KS-test)
+│ │ ├── app_streamlit.py # Interfaz de predicción (Streamlit)
+│ │ └── model_deploy.py # API de predicción (FastAPI)
+│ └── tests/
+│ ├── test_ft_engineering.py # Tests unitarios del pipeline de limpieza
+│ └── test_model_deploy.py # Tests unitarios de la API
+├── .github/
+│ └── workflows/
+│ └── sonarqube.yml # CI: análisis de calidad automático
+├── Base_de_datos.xlsx # Dataset original
+├── modelo_final.pkl # Modelo entrenado (serializado)
+├── Dockerfile # Imagen de la API para despliegue
+├── .dockerignore
+├── .gitignore
+├── pytest.ini # Configuración de pytest
+├── sonar-project.properties # Configuración de SonarQube Cloud
+├── requirements.txt # Dependencias del proyecto
+└── readme.md
 
 
 ## ⚙️ Instalación y configuración
@@ -104,13 +129,70 @@ streamlit run app_streamlit.py
 
 **Hallazgo de comportamiento del modelo:** pruebas manuales mostraron que `saldo_mora` es la variable con mayor influencia en la predicción — su sola presencia lleva la probabilidad de pago a valores cercanos a 0%, casi sin importar el resto de las variables. Además, dado que el modelo prioriza Recall sobre Precision (por diseño), tiende a generar una proporción alta de falsas alarmas (Precision de clase 0: 0.07). **Se recomienda usar el modelo como señal de alerta para revisión manual, no como filtro de rechazo automático.**
 
+## 🚀 6. API de predicción (FastAPI)
+
+El modelo también se expone como servicio web a través de `model_deploy.py`, construido con FastAPI.
+
+```bash
+cd mlops_pipeline/src
+uvicorn model_deploy:app --reload
+```
+
+La API queda disponible en `http://127.0.0.1:8000`, con documentación interactiva en `http://127.0.0.1:8000/docs`.
+
+**Endpoints:**
+- `GET /` — confirma que la API está activa.
+- `POST /predecir` — recibe los datos de un cliente nuevo y devuelve la predicción, junto con la probabilidad de pago a tiempo.
+
+## 🐳 7. Despliegue con Docker
+
+El proyecto incluye un `Dockerfile` para empaquetar la API y correrla en cualquier entorno sin depender de instalar Python o dependencias manualmente.
+
+```bash
+# Construir la imagen
+docker build -t credit-risk-api .
+
+# Correr el contenedor
+docker run -p 8000:8000 credit-risk-api
+```
+
+## ✅ 8. Testing y calidad de código
+
+El proyecto cuenta con una suite de **23 tests unitarios** (pytest), cubriendo el pipeline de limpieza (`ft_engineering.py`) y la API de predicción (`model_deploy.py`).
+
+```bash
+# Correr los tests
+pytest mlops_pipeline/tests -v
+
+# Correr los tests con reporte de cobertura
+pytest mlops_pipeline/tests --cov=mlops_pipeline/src --cov-report=xml
+```
+
+La calidad del código se valida automáticamente con **SonarQube Cloud** en cada push, mediante GitHub Actions (`.github/workflows/sonarqube.yml`). Resultados actuales:
+
+| Métrica | Resultado |
+|---|---|
+| Quality Gate | ✅ Passed |
+| Security | A |
+| Reliability | A |
+| Maintainability | A |
+| Coverage | 36.8% |
+| Duplications | 0% |
+
 ## 🔄 Flujo de trabajo (Git)
 
 El proyecto sigue un flujo de ramas estructurado:
 - `developer`: desarrollo activo
 - `certification`: validación antes de producción
-- `main`: versión oficial, con tags de versión (V1.0.0, V1.0.1, V1.1.0, V1.1.1, V1.2.0)
+- `main`: versión oficial, con tags de versión (V1.0.0, V1.0.1, V1.1.0, V1.1.1, V1.2.0, V1.3.0)
 
 ## 👤 Autora
 
 María Fernanda López Quintana - Científica de Datos Junior Advanced
+
+## 🤝 Colaboradores
+
+Este proyecto incluyó práctica de flujo colaborativo en GitHub (pull requests, revisiones y merges) con:
+- Mauricio Melgarejo ([@mmelgarejo-ds](https://github.com/mmelgarejo-ds))
+- Franco Correa ([@FrancoCorrea90](https://github.com/FrancoCorrea90))
+- Cristian Bale ([@Cristian-Bale](https://github.com/Cristian-Bale))
