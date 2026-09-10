@@ -8,33 +8,6 @@ La empresa necesita anticipar qué clientes tienen mayor probabilidad de **no pa
 
 **Variable objetivo:** `Pago_atiempo` (1 = pagó a tiempo, 0 = no pagó a tiempo)
 
-## 🗂️ Estructura del proyecto
-credit-risk-mflq/
-├── mlops_pipeline/
-│ ├── src/
-│ │ ├── Cargar_datos.ipynb # Carga inicial de datos
-│ │ ├── comprension_eda.ipynb # Análisis exploratorio de datos
-│ │ ├── ft_engineering.py # Pipeline de limpieza y feature engineering
-│ │ ├── model_training_evaluation.py # Entrenamiento y evaluación de modelos
-│ │ ├── model_monitoring.py # Detección de drift (KS-test)
-│ │ ├── app_streamlit.py # Interfaz de predicción (Streamlit)
-│ │ └── model_deploy.py # API de predicción (FastAPI)
-│ └── tests/
-│ ├── test_ft_engineering.py # Tests unitarios del pipeline de limpieza
-│ └── test_model_deploy.py # Tests unitarios de la API
-├── .github/
-│ └── workflows/
-│ └── sonarqube.yml # CI: análisis de calidad automático
-├── Base_de_datos.xlsx # Dataset original
-├── modelo_final.pkl # Modelo entrenado (serializado)
-├── Dockerfile # Imagen de la API para despliegue
-├── .dockerignore
-├── .gitignore
-├── pytest.ini # Configuración de pytest
-├── sonar-project.properties # Configuración de SonarQube Cloud
-├── requirements.txt # Dependencias del proyecto
-└── readme.md
-
 
 ## ⚙️ Instalación y configuración
 
