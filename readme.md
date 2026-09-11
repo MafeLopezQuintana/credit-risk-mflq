@@ -2,6 +2,36 @@
 
 Proyecto de Data Science desarrollado como parte del rol de Científico de Datos Junior Advanced en el equipo de Datos y Analítica de una empresa financiera. El objetivo es predecir el comportamiento de pago de nuevos clientes de crédito, utilizando información histórica, para anticipar el riesgo de no pago.
 
+## 🗂️ Estructura del proyecto
+
+```
+credit-risk-mflq/
+├── mlops_pipeline/
+│   ├── src/
+│   │   ├── Cargar_datos.ipynb
+│   │   ├── comprension_eda.ipynb
+│   │   ├── ft_engineering.py
+│   │   ├── model_training_evaluation.py
+│   │   ├── model_monitoring.py
+│   │   ├── app_streamlit.py
+│   │   └── model_deploy.py
+│   └── tests/
+│       ├── test_ft_engineering.py
+│       └── test_model_deploy.py
+├── .github/
+│   └── workflows/
+│       └── sonarqube.yml
+├── Base_de_datos.xlsx
+├── modelo_final.pkl
+├── Dockerfile
+├── .dockerignore
+├── .gitignore
+├── pytest.ini
+├── sonar-project.properties
+├── requirements.txt
+└── readme.md
+```
+
 ## 📋 Caso de negocio
 
 La empresa necesita anticipar qué clientes tienen mayor probabilidad de **no pagar a tiempo** sus créditos, para poder tomar decisiones informadas al momento de otorgar nuevos préstamos. Se cuenta con un histórico de 10,763 créditos otorgados, con información sociodemográfica, financiera y de comportamiento crediticio de cada cliente.
@@ -81,15 +111,45 @@ Se recalcularon las métricas enfocadas en la clase 0 (clientes riesgosos), y se
 ### Limitación reconocida
 El ROC-AUC de los 3 modelos ronda 0.62-0.64, sugiriendo un techo de performance moderado con las variables disponibles (excluyendo `puntaje` por sospecha de leakage). Existe margen de mejora explorando nuevas variables o validando el origen real de `puntaje`.
 
+
 ## 📈 4. Monitoreo y Data Drift
 
-Se implementó una función de detección de drift (`model_monitoring.py`) basada en el **test de Kolmogorov-Smirnov**, que compara la distribución de cada variable numérica entre un dataset de referencia y uno nuevo.
+El módulo `model_monitoring.py` implementa un sistema de monitoreo continuo del modelo, que combina cuatro métricas de drift, una tabla de datos junto con las predicciones del modelo, muestreo con periodicidad definida, y generación automática de alertas.
 
-**Validación de la metodología:**
+### Métricas de drift implementadas
+
+- **Kolmogorov-Smirnov (KS-test)**: compara la distribución de cada variable numérica.
+- **Population Stability Index (PSI)**: mide qué tan distinta es la distribución entre dos periodos, dividiéndola en buckets. Interpretación estándar: <0.1 sin cambio relevante, 0.1-0.25 cambio moderado, >0.25 cambio significativo.
+- **Jensen-Shannon divergence**: mide la diferencia entre distribuciones basada en histogramas, con valores entre 0 (idénticas) y 1 (completamente distintas).
+- **Chi-cuadrado**: aplicado a variables categóricas (`tipo_laboral`, `tendencia_ingresos`), compara la proporción de cada categoría entre el dataset de referencia y el nuevo.
+
+Una variable se marca como **drift_detectado** cuando al menos 2 de las 3 métricas numéricas (KS, PSI, JS) coinciden en señalar un cambio, o cuando el Chi-cuadrado es significativo para variables categóricas.
+
+### Tabla de datos + predicciones
+
+La función `generar_tabla_predicciones()` combina los datos ya procesados con la predicción y probabilidad que entrega el modelo para cada registro, permitiendo analizar tanto el drift en los datos de entrada como el comportamiento de las predicciones a lo largo del tiempo.
+
+### Muestreo con periodicidad definida
+
+La función `monitoreo_por_periodo()` divide los datos en periodos mensuales, toma el primer periodo como referencia, y calcula KS y PSI de cada periodo posterior contra esa referencia — permitiendo ver la evolución del drift en el tiempo, no solo una comparación puntual.
+
+### Validación de la metodología
+
 - Partición **aleatoria** del dataset (control): **0 de 18** columnas con drift detectado ✅ (confirma que la función no genera falsos positivos).
 - Partición **secuencial/temporal** (créditos antiguos vs. recientes): **12 de 18** columnas con drift detectado, destacando `edad_cliente` (KS=0.64) y `puntaje_datacredito` (KS=0.24).
 
 **Conclusión:** el perfil de los clientes atendidos ha cambiado a lo largo del tiempo cubierto por el dataset. Se recomienda monitorear este comportamiento en producción y reentrenar el modelo periódicamente para evitar degradación de performance.
+
+### Dashboard de monitoreo en Streamlit
+
+La app de Streamlit (`app_streamlit.py`) incluye una pestaña de **Monitoreo del modelo** con:
+
+- **Alertas y recomendaciones automáticas**: nivel de alerta (ninguna/moderada/crítica) según el % de variables con drift, con recomendación de reentrenar si se supera el umbral.
+- **Tabla de métricas por variable** con indicador visual tipo semáforo (🟢 sin cambios, 🟡 moderado, 🔴 alto).
+- **Gráfico comparativo** de la distribución histórica vs. actual para la variable que el usuario elija.
+- **Análisis temporal**: evolución del PSI promedio por periodo mensual, detectando cambios abruptos.
+- **Tabla de predicciones**: resumen estadístico de las predicciones y probabilidades generadas por el modelo.
+
 
 ## 🖥️ 5. Aplicación de predicción (Streamlit)
 
