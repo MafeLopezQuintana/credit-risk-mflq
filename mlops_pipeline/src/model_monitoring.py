@@ -8,6 +8,8 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
+import json
+from datetime import datetime
 from scipy.stats import ks_2samp, chi2_contingency
 from scipy.spatial.distance import jensenshannon
 
@@ -27,7 +29,9 @@ from ft_engineering import (
 CARPETA_ACTUAL = os.path.dirname(os.path.abspath(__file__))
 RUTA_DATASET = os.path.join(CARPETA_ACTUAL, '..', '..', 'Base_de_datos.xlsx')
 RUTA_MODELO = os.path.join(CARPETA_ACTUAL, '..', 'modelo_final.pkl')
-
+CARPETA_REPORTES = os.path.join(CARPETA_ACTUAL, '..', '..', 'reports')
+RUTA_DRIFT_REPORT = os.path.join(CARPETA_REPORTES, 'drift_report.json')
+RUTA_DRIFT_HISTORY = os.path.join(CARPETA_REPORTES, 'drift_history.csv')
 UMBRAL_PVALUE_KS = 0.05
 UMBRAL_PSI = 0.25          # > 0.25 = cambio significativo (estándar de la industria)
 UMBRAL_JS = 0.10           # > 0.10 = cambio moderado/alto
@@ -310,6 +314,50 @@ def generar_alertas(tabla_drift, umbral_proporcion=UMBRAL_PROPORCION_ALERTA):
         'recomendacion': recomendacion,
     }
 
+# ============================================================
+# 6. Exportación de reportes (JSON actual + historial CSV)
+# ============================================================
+
+def guardar_drift_report(reporte_df, alertas, ruta_salida=RUTA_DRIFT_REPORT):
+    """
+    Guarda el reporte de drift de la corrida actual en un archivo JSON,
+    con un resumen ejecutivo y el detalle por variable.
+    """
+    os.makedirs(os.path.dirname(ruta_salida), exist_ok=True)
+
+    contenido = {
+        'timestamp': datetime.now().isoformat(),
+        'resumen': {
+            'total_columnas': alertas['total_columnas'],
+            'columnas_con_drift': alertas['columnas_con_drift'],
+            'proporcion_con_drift': alertas['proporcion_columnas_con_drift'],
+            'nivel_alerta': alertas['nivel'],
+            'mensaje': alertas['mensaje'],
+            'recomendacion': alertas['recomendacion'],
+        },
+        'detalle_por_variable': reporte_df.to_dict(orient='records'),
+    }
+
+    with open(ruta_salida, 'w', encoding='utf-8') as f:
+        json.dump(contenido, f, ensure_ascii=False, indent=2)
+
+    return ruta_salida
+
+
+def actualizar_drift_history(reporte_df, ruta_salida=RUTA_DRIFT_HISTORY):
+    """
+    Agrega la corrida actual como filas nuevas al historial acumulado
+    de drift (CSV), para llevar un registro de cómo evoluciona en el tiempo.
+    """
+    os.makedirs(os.path.dirname(ruta_salida), exist_ok=True)
+
+    reporte_con_fecha = reporte_df.copy()
+    reporte_con_fecha.insert(0, 'fecha_ejecucion', datetime.now().isoformat())
+
+    archivo_existe = os.path.exists(ruta_salida)
+    reporte_con_fecha.to_csv(ruta_salida, mode='a', header=not archivo_existe, index=False)
+
+    return ruta_salida
 
 if __name__ == "__main__":
     pd.set_option('display.max_columns', None)
@@ -336,3 +384,8 @@ if __name__ == "__main__":
     print("\n=== Tabla de datos + predicciones del modelo ===")
     tabla_predicciones = generar_tabla_predicciones(RUTA_DATASET)
     print(tabla_predicciones[['prediccion', 'probabilidad_pago']].head())
+
+    ruta_json = guardar_drift_report(reporte, alertas)
+    ruta_csv = actualizar_drift_history(reporte)
+    print(f"\nReporte guardado en: {ruta_json}")
+    print(f"Historial actualizado en: {ruta_csv}")

@@ -1,0 +1,193 @@
+{
+  "timestamp": "2026-09-11T20:51:39.578272",
+  "resumen": {
+    "total_columnas": 18,
+    "columnas_con_drift": 0,
+    "proporcion_con_drift": 0.0,
+    "nivel_alerta": "NINGUNA",
+    "mensaje": "No se detectó drift significativo en las variables analizadas.",
+    "recomendacion": "No se requiere acción."
+  },
+  "detalle_por_variable": [
+    {
+      "columna": "tipo_credito",
+      "tipo": "numerica",
+      "ks_estadistico": 0.015,
+      "ks_pvalue": 0.5712,
+      "psi": 0.0011,
+      "js_divergence": 0.0096,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "capital_prestado",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0207,
+      "ks_pvalue": 0.1981,
+      "psi": 0.0035,
+      "js_divergence": 0.0196,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "plazo_meses",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0105,
+      "ks_pvalue": 0.9247,
+      "psi": 0.0012,
+      "js_divergence": 0.0169,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "edad_cliente",
+      "tipo": "numerica",
+      "ks_estadistico": 0.019,
+      "ks_pvalue": 0.2814,
+      "psi": 0.0039,
+      "js_divergence": 0.0309,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "salario_cliente",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0211,
+      "ks_pvalue": 0.1772,
+      "psi": 0.0054,
+      "js_divergence": 0.0288,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "total_otros_prestamos",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0167,
+      "ks_pvalue": 0.4367,
+      "psi": 0.0034,
+      "js_divergence": 0.0265,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "cuota_pactada",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0203,
+      "ks_pvalue": 0.2118,
+      "psi": 0.0029,
+      "js_divergence": 0.0252,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "puntaje_datacredito",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0155,
+      "ks_pvalue": 0.5252,
+      "psi": 0.0028,
+      "js_divergence": 0.0275,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "cant_creditosvigentes",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0203,
+      "ks_pvalue": 0.2119,
+      "psi": 0.0043,
+      "js_divergence": 0.0214,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "huella_consulta",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0121,
+      "ks_pvalue": 0.8172,
+      "psi": 0.0029,
+      "js_divergence": 0.0294,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "saldo_mora",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0009,
+      "ks_pvalue": 1.0,
+      "psi": 0.0,
+      "js_divergence": 0.0273,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "saldo_total",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0127,
+      "ks_pvalue": 0.7674,
+      "psi": 0.0041,
+      "js_divergence": 0.0269,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "saldo_principal",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0137,
+      "ks_pvalue": 0.6841,
+      "psi": 0.0034,
+      "js_divergence": 0.0252,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "saldo_mora_codeudor",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0006,
+      "ks_pvalue": 1.0,
+      "psi": 0.0,
+      "js_divergence": 0.0136,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "creditos_sectorFinanciero",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0202,
+      "ks_pvalue": 0.2168,
+      "psi": 0.0031,
+      "js_divergence": 0.0297,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "creditos_sectorCooperativo",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0093,
+      "ks_pvalue": 0.9717,
+      "psi": 0.0005,
+      "js_divergence": 0.0215,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "creditos_sectorReal",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0067,
+      "ks_pvalue": 0.9997,
+      "psi": 0.0003,
+      "js_divergence": 0.0186,
+      "senales_drift": 0,
+      "drift_detectado": false
+    },
+    {
+      "columna": "promedio_ingresos_datacredito",
+      "tipo": "numerica",
+      "ks_estadistico": 0.0158,
+      "ks_pvalue": 0.5056,
+      "psi": 0.0055,
+      "js_divergence": 0.0347,
+      "senales_drift": 0,
+      "drift_detectado": false
+    }
+  ]
+}
