@@ -150,6 +150,12 @@ La app de Streamlit (`app_streamlit.py`) incluye una pestaña de **Monitoreo del
 - **Análisis temporal**: evolución del PSI promedio por periodo mensual, detectando cambios abruptos.
 - **Tabla de predicciones**: resumen estadístico de las predicciones y probabilidades generadas por el modelo.
 
+### Reportes persistentes
+
+Cada vez que se ejecuta `model_monitoring.py`, se generan/actualizan dos archivos en la carpeta `reports/`:
+
+- **`drift_report.json`**: reporte de la corrida más reciente, con un resumen ejecutivo (nivel de alerta, mensaje, recomendación) y el detalle de las métricas por variable. Pensado para ser leído por otros sistemas o procesos automatizados.
+- **`drift_history.csv`**: historial acumulado de todas las corridas, con fecha de ejecución, que permite auditar cómo evolucionó el drift a lo largo del tiempo sin depender de que el dashboard esté abierto.
 
 ## 🖥️ 5. Aplicación de predicción (Streamlit)
 
