@@ -8,6 +8,7 @@ import joblib
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import List
 
 CARPETA_ACTUAL = os.path.dirname(os.path.abspath(__file__))
 RUTA_MODELO = os.path.join(CARPETA_ACTUAL, '..', 'modelo_final.pkl')
@@ -44,7 +45,10 @@ class DatosCliente(BaseModel):
     tipo_laboral: str
     tendencia_ingresos: str
 
-
+class LoteClientes(BaseModel):
+    """Esquema de entrada para predicción por lotes: una lista de clientes."""
+    clientes: List[DatosCliente]
+    
 def preparar_entrada(datos: DatosCliente) -> pd.DataFrame:
     """Convierte los datos recibidos en el formato que espera el modelo (mismo encoding que en el entrenamiento)."""
     fila = {
@@ -90,4 +94,27 @@ def predecir(datos: DatosCliente):
         "prediccion": prediccion,
         "pago_a_tiempo": bool(prediccion == 1),
         "probabilidad_pago": round(probabilidad, 4)
+    }
+    
+@app.post("/predecir_batch")
+def predecir_batch(lote: LoteClientes):
+    """Recibe una lista de clientes y devuelve la predicción de cada uno en una sola respuesta."""
+    entradas = pd.concat(
+        [preparar_entrada(cliente) for cliente in lote.clientes],
+        ignore_index=True
+    )
+    predicciones = modelo.predict(entradas)
+    probabilidades = modelo.predict_proba(entradas)[:, 1]
+
+    resultados = []
+    for prediccion, probabilidad in zip(predicciones, probabilidades):
+        resultados.append({
+            "prediccion": int(prediccion),
+            "pago_a_tiempo": bool(prediccion == 1),
+            "probabilidad_pago": round(float(probabilidad), 4)
+        })
+
+    return {
+        "resultados": resultados,
+        "total_procesados": len(resultados)
     }

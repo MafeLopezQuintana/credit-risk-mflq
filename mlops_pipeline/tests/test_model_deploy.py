@@ -141,3 +141,49 @@ def test_predecir_rechaza_tipo_de_dato_invalido():
     datos_invalidos = datos_cliente_ejemplo(edad_cliente="treinta y cinco")
     respuesta = client.post("/predecir", json=datos_invalidos)
     assert respuesta.status_code == 422
+    
+    # ---------- endpoint /predecir_batch ----------
+
+def test_predecir_batch_responde_ok_con_multiples_clientes():
+    payload = {"clientes": [datos_cliente_ejemplo(), datos_cliente_ejemplo()]}
+    respuesta = client.post("/predecir_batch", json=payload)
+    assert respuesta.status_code == 200
+
+
+def test_predecir_batch_devuelve_total_procesados_correcto():
+    payload = {"clientes": [datos_cliente_ejemplo(), datos_cliente_ejemplo(), datos_cliente_ejemplo()]}
+    respuesta = client.post("/predecir_batch", json=payload)
+    cuerpo = respuesta.json()
+    assert cuerpo["total_procesados"] == 3
+
+
+def test_predecir_batch_devuelve_un_resultado_por_cliente():
+    payload = {"clientes": [datos_cliente_ejemplo(), datos_cliente_ejemplo()]}
+    respuesta = client.post("/predecir_batch", json=payload)
+    cuerpo = respuesta.json()
+    assert len(cuerpo["resultados"]) == 2
+
+
+def test_predecir_batch_cada_resultado_tiene_estructura_esperada():
+    payload = {"clientes": [datos_cliente_ejemplo()]}
+    respuesta = client.post("/predecir_batch", json=payload)
+    resultado = respuesta.json()["resultados"][0]
+    assert "prediccion" in resultado
+    assert "pago_a_tiempo" in resultado
+    assert "probabilidad_pago" in resultado
+
+
+def test_predecir_batch_resultados_son_independientes_entre_clientes():
+    cliente_sano = datos_cliente_ejemplo(saldo_mora=0.0, puntaje_datacredito=800.0)
+    cliente_riesgoso = datos_cliente_ejemplo(saldo_mora=900000.0, puntaje_datacredito=300.0)
+    payload = {"clientes": [cliente_sano, cliente_riesgoso]}
+    respuesta = client.post("/predecir_batch", json=payload)
+    resultados = respuesta.json()["resultados"]
+    # Los dos perfiles son muy distintos, así que sus probabilidades no deberían ser iguales
+    assert resultados[0]["probabilidad_pago"] != resultados[1]["probabilidad_pago"]
+
+
+def test_predecir_batch_rechaza_lista_vacia_o_cliente_invalido():
+    payload = {"clientes": [{"edad_cliente": "no es un numero"}]}
+    respuesta = client.post("/predecir_batch", json=payload)
+    assert respuesta.status_code == 422
