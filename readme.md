@@ -182,6 +182,7 @@ La API queda disponible en `http://127.0.0.1:8000`, con documentación interacti
 **Endpoints:**
 - `GET /` — confirma que la API está activa.
 - `POST /predecir` — recibe los datos de un cliente nuevo y devuelve la predicción, junto con la probabilidad de pago a tiempo.
+- `POST /predecir_batch` — recibe una lista de varios clientes en una sola solicitud y devuelve la predicción de cada uno, procesados en conjunto de forma eficiente (predicción por lotes).
 
 ## 🐳 7. Despliegue con Docker
 
