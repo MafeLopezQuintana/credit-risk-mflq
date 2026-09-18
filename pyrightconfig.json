@@ -1,0 +1,3 @@
+{
+  "extraPaths": ["./mlops_pipeline/src"]
+}
