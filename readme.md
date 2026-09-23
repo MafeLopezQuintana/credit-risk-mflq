@@ -16,8 +16,11 @@ credit-risk-mflq/
 │   │   ├── app_streamlit.py
 │   │   └── model_deploy.py
 │   └── tests/
+│       ├── __init__.py
 │       ├── test_ft_engineering.py
-│       └── test_model_deploy.py
+│       ├── test_model_deploy.py
+│       ├── test_model_monitoring.py
+│       └── test_model_monitoring_integracion.py
 ├── .github/
 │   └── workflows/
 │       └── sonarqube.yml
@@ -235,4 +238,4 @@ María Fernanda López Quintana - Científica de Datos Junior Advanced
 Este proyecto incluyó práctica de flujo colaborativo en GitHub (pull requests, revisiones y merges) con:
 - Mauricio Melgarejo ([@mmelgarejo-ds](https://github.com/mmelgarejo-ds))
 - Franco Correa ([@FrancoCorrea90](https://github.com/FrancoCorrea90))
-- Cristian Bale ([@Cristian-Bale](https://github.com/Cristian-Bale))
+- Cristian Duran ([@Cristian-Bale](https://github.com/Cristian-Bale))
