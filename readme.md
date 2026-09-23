@@ -16,8 +16,11 @@ credit-risk-mflq/
 │   │   ├── app_streamlit.py
 │   │   └── model_deploy.py
 │   └── tests/
+│       ├── __init__.py
 │       ├── test_ft_engineering.py
-│       └── test_model_deploy.py
+│       ├── test_model_deploy.py
+│       ├── test_model_monitoring.py
+│       └── test_model_monitoring_integracion.py
 ├── .github/
 │   └── workflows/
 │       └── sonarqube.yml
